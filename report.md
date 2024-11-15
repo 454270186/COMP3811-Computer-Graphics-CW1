@@ -328,3 +328,5 @@ This implementation is simple and effective, but there are a few areas where opt
    Instead of checking each pixel’s bounds individually, we could calculate the valid drawing bounds once and adjust the loop ranges accordingly. This would reduce the number of boundary checks needed inside the inner loop.
 3. **Cache-Friendly Memory Access**
    Access patterns could be optimized by storing the `ColorU8_sRGB` values of visible pixels in a contiguous buffer beforehand, reducing the number of cache misses.
+
+<img src="/Users/yuerfei/Desktop/地球.png" style="zoom:30%;" />
