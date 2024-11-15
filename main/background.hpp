@@ -47,7 +47,7 @@ class Background final
 		static constexpr float kNearSpeedMult = 1.f;
 		static constexpr ColorF kNearColor = { .35f, .35f, .35f };
 
-		static constexpr char const* kEarthPath = "assets/test.png";
+		static constexpr char const* kEarthPath = "assets/earth.png";
 		static constexpr Vec2f kEarthCoord = { 1800.f, 500.f };
 };
 
