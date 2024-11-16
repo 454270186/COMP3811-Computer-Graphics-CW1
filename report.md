@@ -11,6 +11,7 @@
 - 1.5 Barycentric interpolation
 - 1.6 Blitting images
 - 1.7 Testing: lines
+- 1.8 Testing: triangles
 
 
 
@@ -347,8 +348,6 @@ In this task, I aim to verify the robustness and accuracy of the line-drawing fu
 - **Purpose**: This test checks the algorithm's ability to maintain continuity when two lines meet at a common point (`p1`). In applications where smooth transitions between line segments are essential—such as in rendering paths, shapes, or objects—any gap between segments would be visually unappealing and suggest flaws in the drawing algorithm. The absence of a gap demonstrates that the algorithm handles such connections properly, providing a seamless and visually continuous line.
 - <img src="/Users/yuerfei/Desktop/test1.png" style="zoom:25%; float:left" />
 
-
-
 **Additional Test Cases**
 
 1. **Diagonal Edge-to-Edge Line**
@@ -385,3 +384,36 @@ In this task, I aim to verify the robustness and accuracy of the line-drawing fu
 
      - **Reasoning**: Lines with shallow angles can reveal aliasing and accuracy issues, so this test verifies that the function maintains visual consistency.
      - <img src="/Users/yuerfei/Desktop/test5.png" style="zoom:25%; float:left" />
+
+
+
+### Task 1.8 Testing: triangles
+
+**Additioanl Test Cases**
+
+1. **Small Triangle (Pixel-Sized)**
+
+   - **Description**: A triangle with all three vertices placed very close together, forming a tiny filled region, potentially as small as a single pixel.
+
+   - **Purpose**: To test the algorithm's accuracy and handling of very small triangles, especially subpixel rendering.
+
+   - **Reasoning**: Small triangles challenge the algorithm to maintain precision without skipping pixels. This case ensures that even minimal triangles are rendered correctly without any visual artifacts or skipped regions.
+   - <img src="/Users/yuerfei/Desktop/tt1.png" style="zoom:25%; float:left" />
+
+2. **Extremely Large Triangle (Crosses Entire Viewport)**
+
+   - **Description**: A triangle that spans the entire viewport and extends far beyond the screen boundaries.
+
+   - **Purpose**: To test how the algorithm handles large-scale input and efficiently clips shapes that exceed the viewport dimensions.
+
+   - **Reasoning**: Large triangles can strain algorithms if not efficiently clipped. This test ensures that the implementation processes only visible portions and avoids unnecessary computations, ensuring both correctness and performance.
+   - <img src="/Users/yuerfei/Desktop/tt2.png" style="zoom:25%; float:left" />
+
+3. **Degenerate Triangle**
+
+   - **Description**: A triangle where all three vertices are collinear, effectively reducing the triangle to a line.
+
+   - **Purpose**: To test how the algorithm handles edge cases where the triangle's area is effectively zero.
+
+   - **Reasoning**: Degenerate triangles can cause issues in rasterization, such as division by zero or undefined behavior. This test ensures that the algorithm handles such edge cases gracefully, either by rendering a line or omitting the triangle without errors.
+   - <img src="/Users/yuerfei/Desktop/tt3.png" style="zoom:25%; float:left" />

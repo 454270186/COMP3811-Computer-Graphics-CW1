@@ -97,7 +97,7 @@ int main( int aArgc, char* aArgv[] ) try
 	GLFWWindowDeleter windowDeleter{ window };
 
 	// Set up event handling
-	std::size_t testId = 1;
+	std::size_t testId = 6;
 	glfwSetWindowUserPointer( window, &testId );
 
 	glfwSetKeyCallback( window, &glfw_callback_key_ );
@@ -227,6 +227,29 @@ int main( int aArgc, char* aArgv[] ) try
 
 			//TODO: your own sample cases here?
 			//TODO: your own sample cases here?
+			case 4: {
+				 // Small triangle (close to a single pixel)
+    			draw_triangle_solid(surface, 
+        			{150.2f, 150.2f}, {150.8f, 150.2f}, {150.5f, 150.8f}, 
+        			{128, 128, 128}
+    			);
+			} break;
+
+			case 5: {
+				// Large triangle (spans beyond the screen)
+    			draw_triangle_solid(surface, 
+    			    {-500.f, -500.f}, {fbwidth + 500.f, -500.f}, {fbwidth / 2.f, fbheight + 500.f}, 
+    			    {255, 128, 0}
+    			);
+			} break;
+
+			case 6: {
+				// Degenerate triangle (line)
+    			draw_triangle_solid(surface, 
+    			    {150.f, 150.f}, {200.f, 200.f}, {250.f, 250.f}, 
+    			    {0, 0, 255}
+    			);
+			} break;
 		}
 		
 		context.draw( surface );
