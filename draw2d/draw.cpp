@@ -147,6 +147,92 @@ void draw_triangle_interp( Surface& aSurface, Vec2f aP0, Vec2f aP1, Vec2f aP2, C
     }
 }
 
+void draw_line_dda(Surface& aSurface, Vec2f aStart, Vec2f aEnd, ColorU8_sRGB aColor)
+{
+    float dx = aEnd.x - aStart.x;
+    float dy = aEnd.y - aStart.y;
+
+    int steps = std::max(std::abs(dx), std::abs(dy));
+
+    float xIncrement = dx / steps;
+    float yIncrement = dy / steps;
+
+    float x = aStart.x;
+    float y = aStart.y;
+
+    // Draw each pixel
+    for (int i = 0; i <= steps; ++i)
+    {
+        int ix = static_cast<int>(x);
+        int iy = static_cast<int>(y);
+
+        if (ix >= 0 && ix < aSurface.get_width() && iy >= 0 && iy < aSurface.get_height())
+        {
+            aSurface.set_pixel_srgb(ix, iy, aColor);
+        }
+
+        x += xIncrement;
+        y += yIncrement;
+    }
+}
+
+void draw_line_optimized(Surface& aSurface, Vec2f aStart, Vec2f aEnd, ColorU8_sRGB aColor)
+{
+    // Early clipping to screen boundaries
+    auto clip_to_screen = [&aSurface](Vec2f& p1, Vec2f& p2) {
+        int w = aSurface.get_width();
+        int h = aSurface.get_height();
+
+        // Clip x-coordinates
+        if (p1.x < 0) p1.x = 0;
+        if (p1.x >= w) p1.x = w - 1;
+        if (p2.x < 0) p2.x = 0;
+        if (p2.x >= w) p2.x = w - 1;
+
+        // Clip y-coordinates
+        if (p1.y < 0) p1.y = 0;
+        if (p1.y >= h) p1.y = h - 1;
+        if (p2.y < 0) p2.y = 0;
+        if (p2.y >= h) p2.y = h - 1;
+    };
+
+    clip_to_screen(aStart, aEnd);
+
+    // Standard Bresenham line-drawing logic after clipping
+    int x0 = static_cast<int>(aStart.x);
+    int y0 = static_cast<int>(aStart.y);
+    int x1 = static_cast<int>(aEnd.x);
+    int y1 = static_cast<int>(aEnd.y);
+
+    int dx = std::abs(x1 - x0);
+    int dy = std::abs(y1 - y0);
+
+    int sx = (x0 < x1) ? 1 : -1;
+    int sy = (y0 < y1) ? 1 : -1;
+
+    int err = dx - dy;
+
+    while (true)
+    {
+        aSurface.set_pixel_srgb(x0, y0, aColor);
+
+        if (x0 == x1 && y0 == y1)
+            break;
+
+        int e2 = 2 * err;
+
+        if (e2 > -dy)
+        {
+            err -= dy;
+            x0 += sx;
+        }
+        if (e2 < dx)
+        {
+            err += dx;
+            y0 += sy;
+        }
+    }
+}
 
 void draw_rectangle_solid( Surface& aSurface, Vec2f aMinCorner, Vec2f aMaxCorner, ColorU8_sRGB aColor )
 {

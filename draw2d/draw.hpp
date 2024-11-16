@@ -49,4 +49,7 @@ void draw_rectangle_outline(
 	ColorU8_sRGB
 );
 
+void draw_line_dda(Surface& aSurface, Vec2f aStart, Vec2f aEnd, ColorU8_sRGB aColor);
+void draw_line_optimized(Surface& aSurface, Vec2f aStart, Vec2f aEnd, ColorU8_sRGB aColor);
+
 #endif // DRAW_HPP_BA97BA20_4B0E_45D8_97D4_65267FFA2EA6

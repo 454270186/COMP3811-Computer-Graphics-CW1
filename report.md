@@ -1,25 +1,8 @@
-# XJCO3811 Computer Graphics CW1 Report
-
-## Task Overview
-
-- 1.1 Setting Pixels
-
-- 1.2 Drawing Lines
-
-- 1.3 2D Rotation
-- 1.4 Drawing triangles
-- 1.5 Barycentric interpolation
-- 1.6 Blitting images
-- 1.7 Testing: lines
-- 1.8 Testing: triangles
-
-
+## XJCO3811 Computer Graphics CW1 Report
 
 ### Task 1.1 Setting Pixels
 
 In Task 1.1, I implemented essential functions for rendering pixels to visualize a particle field. Specifically, I created the `set_pixel_srgb` and `get_linear_index` functions, which enable me to position and color individual pixels within a defined window.
-
-
 
 The positions of critical pixels in the window help define the rendering area:
 
@@ -27,11 +10,7 @@ The positions of critical pixels in the window help define the rendering area:
 - **(w−1, 0) - Top-Right Corner**: The top-right edge of the window, marking the horizontal boundary.
 - **(0, h−1) - Bottom-Left Corner**: The bottom-left edge of the window, marking the vertical boundary.
 
-<img src="/Users/yuerfei/Desktop/粒子场.png" style="zoom:30%;" />
-
-
-
-
+<img src="/Users/yuerfei/Desktop/粒子场.png" style="zoom:5%; float:left" />
 
 ### Task 1.2 Drawing Lines
 
@@ -86,9 +65,7 @@ if (x0 >= 0 && x0 < aSurface.get_width() && y0 >= 0 && y0 < aSurface.get_height(
 
 This conditional check prevents the function from writing pixels outside the screen bounds, which could cause rendering issues or errors.
 
-<img src="/Users/yuerfei/Desktop/飞船.png" style="zoom:30%;" />
-
-
+<img src="/Users/yuerfei/Desktop/飞船.png" style="zoom:5%; float:left" />
 
 ### Task 1.3 2D Rotation
 
@@ -128,9 +105,7 @@ return Mat22f{
     cosRes};
 ```
 
-<img src="/Users/yuerfei/Desktop/旋转的飞船.png" style="zoom:30%;" />
-
-
+<img src="/Users/yuerfei/Desktop/旋转的飞船.png" style="zoom:5%; float:left" />
 
 ### Task 1.4 Drawing triangles
 
@@ -199,24 +174,11 @@ if (aP1.y != aP2.y) {
 **Special Handling for Screen Boundaries**
 To avoid drawing outside the surface, boundary checks (`x >= 0 && x < aSurface.get_width() && y >= 0 && y < aSurface.get_height()`) ensure that pixels are only set within valid screen coordinates.
 
-
-
 ### Task 1.5 Barycentric interpolation
 
-In Task 1.5, I implemented the `draw_triangle_interp` function, which draws a filled triangle with interpolated colors across its surface using barycentric coordinates. This method allows for smooth color gradients within the triangle, unlike the previous task where a single color filled the entire triangle.
+In Task 1.5, I implemented the `draw_triangle_interp` function to draw triangles with smooth color gradients using barycentric interpolation. Unlike the `draw_triangle_solid` method (Task 1.4), which fills the triangle with a uniform color, this method assigns unique colors to each vertex (`aC0`, `aC1`, `aC2`) and calculates pixel colors by interpolating these values based on barycentric weights.
 
-**Differences from the Previous Method**
-The primary difference from the `draw_triangle_solid` method (Task 1.4) is that here I use **barycentric interpolation** to blend colors across the triangle surface. Instead of a uniform color, each vertex (`aP0`, `aP1`, `aP2`) is assigned a unique color (`aC0`, `aC1`, `aC2`), and the color at each pixel within the triangle is computed by interpolating these vertex colors based on barycentric weights.
-
-**Bounding Box Optimization**
-To limit the number of pixels we check, we first calculate a bounding box for the triangle. This is done by finding the minimum and maximum x and y coordinates among the vertices:
-
-```c++
-float minX = std::min({ aP0.x, aP1.x, aP2.x });
-float maxX = std::max({ aP0.x, aP1.x, aP2.x });
-float minY = std::min({ aP0.y, aP1.y, aP2.y });
-float maxY = std::max({ aP0.y, aP1.y, aP2.y });
-```
+To improve efficiency, a bounding box is computed by determining the minimum and maximum x and y coordinates of the vertices, reducing the number of pixels to evaluate within the triangle. This approach ensures smooth color blending and efficient rendering.
 
 **Barycentric Coordinates Calculation**
 For each pixel within the bounding box, the algorithm calculates barycentric coordinates (`lambda0`, `lambda1`, and `lambda2`) relative to the triangle’s vertices. These coordinates represent the "weights" of each vertex for the pixel’s position, helping to interpolate the color smoothly across the triangle surface.
@@ -260,9 +222,7 @@ if (x >= 0 && x < aSurface.get_width() && y >= 0 && y < aSurface.get_height()) {
 }
 ```
 
-<img src="/Users/yuerfei/Desktop/陨石.png" style="zoom:30%;" />
-
-
+<img src="/Users/yuerfei/Desktop/陨石.png" style="zoom:5%; float:left" />
 
 ### Task 1.6 Blitting images
 
@@ -273,40 +233,18 @@ In Task 1.6, I implemented the `blit_masked` function, which renders an image on
 1. **Setting Up the Start Position**
    I start by calculating the initial drawing coordinates (`startX` and `startY`) based on the given `aPosition`:
 
-   ```c++
-   int startX = static_cast<int>(aPosition.x);
-   int startY = static_cast<int>(aPosition.y);
-   ```
-
    These values represent the top-left corner of the image on the surface.
-
+   
 2. **Looping Through Image Pixels**
    I iterate over each pixel of the `aImage` using two nested loops for height (`y`) and width (`x`):
 
-   ```c++
-   for (int y = 0; y < imageHeight; ++y) {
-       for (int x = 0; x < imageWidth; ++x) {
-           ColorU8_sRGB_Alpha pixel = aImage.get_pixel(x, y);
-   ```
-
    The `get_pixel` function retrieves the RGBA color of each pixel.
-
+   
 3. **Alpha Masking**
    To handle transparency, I check the alpha value of each pixel. If the alpha is less than 128, we skip rendering for that pixel, ensuring that pixels with lower transparency are ignored:
 
-   ```c++
-   if (pixel.a < 128) {
-       continue;
-   }
-   ```
-
 4. **Calculating Destination Coordinates**
    For each valid pixel, I calculate its destination coordinates on the surface by offsetting `startX` and `startY` by the pixel's position within the image:
-
-   ```c++
-   int destX = startX + x;
-   int destY = startY + y;
-   ```
 
 5. **Boundary Checks**
    Before setting the pixel, we ensure it lies within the surface boundaries to avoid out-of-bounds memory access. Only pixels that pass this check are rendered:
@@ -322,70 +260,42 @@ In Task 1.6, I implemented the `blit_masked` function, which renders an image on
 
 **Efficiency Analysis**
 
-This implementation is simple and effective, but there are a few areas where optimizations could be considered:
+The implementation is straightforward and effective, but several optimizations could enhance performance. Introducing an early exit mechanism for fully transparent rows would save processing time for images with large transparent regions, avoiding unnecessary iterations. Additionally, clipping the drawing bounds beforehand could eliminate repetitive boundary checks inside the inner loop, streamlining execution. Optimizing memory access by storing visible pixel data in a contiguous buffer could further improve cache efficiency and reduce memory overhead. These changes would enhance the overall speed and scalability of the algorithm.
 
-1. **Early Exit for Fully Transparent Rows**
-   If a row in the image has all pixels with alpha values below 128, we could skip the entire row. This optimization would save processing time for images with large transparent regions, although it may require scanning or marking transparent rows in advance.
-2. **Clipping the Drawing Bounds**
-   Instead of checking each pixel’s bounds individually, we could calculate the valid drawing bounds once and adjust the loop ranges accordingly. This would reduce the number of boundary checks needed inside the inner loop.
-3. **Cache-Friendly Memory Access**
-   Access patterns could be optimized by storing the `ColorU8_sRGB` values of visible pixels in a contiguous buffer beforehand, reducing the number of cache misses.
-
-<img src="/Users/yuerfei/Desktop/地球.png" style="zoom:30%;" />
-
-
-
-
+<img src="/Users/yuerfei/Desktop/地球.png" style="zoom:5%; float:left" />
 
 ### Task 1.7 Testing: lines
 
-In this task, I aim to verify the robustness and accuracy of the line-drawing function by implementing additional test cases that check various edge cases and requirements for line rendering. Specifically, one of the key tests I introduce is a **connected line test** to ensure there is no gap between two sequentially drawn lines, which is a critical property for applications requiring continuous paths.
+To verify the robustness and accuracy of the line-drawing function, I introduced additional test cases targeting critical edge cases. One key test is the **connected line test**, designed to ensure no gaps occur between two sequentially drawn lines, which is essential for continuous path rendering.
 
 **Test Case: Two Connected Horizontal Lines with No Gap**
 
-- **Description**: This test case involves drawing two connected lines, where the first line begins at `p0` and extends to `p1`, and the second line continues from `p1` to `p2`. The goal is to ensure that there is no gap at the connecting point `p1`, thereby verifying the continuity of the line-drawing algorithm at junctions.
+- This test involves drawing two connected lines: the first from `p0` to `p1` and the second from `p1` to `p2`. It ensures no gap appears at the connecting point `p1`, verifying continuity. Such tests are crucial for applications requiring smooth transitions between line segments, like rendering paths or shapes. A seamless connection demonstrates the algorithm's ability to handle junctions properly, ensuring visually appealing and continuous lines.
 
-- **Purpose**: This test checks the algorithm's ability to maintain continuity when two lines meet at a common point (`p1`). In applications where smooth transitions between line segments are essential—such as in rendering paths, shapes, or objects—any gap between segments would be visually unappealing and suggest flaws in the drawing algorithm. The absence of a gap demonstrates that the algorithm handles such connections properly, providing a seamless and visually continuous line.
-- <img src="/Users/yuerfei/Desktop/test1.png" style="zoom:25%; float:left" />
+- <img src="/Users/yuerfei/Desktop/test1.png" style="zoom:5%; float:left" />
 
 **Additional Test Cases**
 
 1. **Diagonal Edge-to-Edge Line**
 
-   - **Description**: This test draws a diagonal line across the screen from one corner to the opposite, ensuring that diagonal line handling is accurate.
-
-   - **Purpose**: To verify that the algorithm handles non-axis-aligned lines correctly, especially when they span the entire screen.
-   - **Reasoning**: Diagonal lines often reveal issues with pixel continuity and aliasing. Properly handling them ensures that the function can render lines of any orientation.
-   - <img src="/Users/yuerfei/Desktop/test2.png" style="zoom:25%; float:left" />
-
+   - **Description**: This test draws a diagonal line across the screen from one corner to the opposite, ensuring that diagonal line handling is accurate. **Purpose**: To verify that the algorithm handles non-axis-aligned lines correctly, especially when they span the entire screen. **Reasoning**: Diagonal lines often reveal issues with pixel continuity and aliasing. Properly handling them ensures that the function can render lines of any orientation.
+   - <img src="/Users/yuerfei/Desktop/test2.png" style="zoom:5%; float:left" />
+   
 2. **Partially Offscreen Vertical Line**
 
-   - **Description**: This test draws a vertical line that extends beyond the boundaries of the screen to check clipping.
-
-   - **Purpose**: To confirm that the algorithm correctly handles lines that extend offscreen by clipping them at the screen boundaries.
-
-   - **Reasoning**: Handling offscreen content gracefully is important for both performance and visual accuracy.
-   - <img src="/Users/yuerfei/Desktop/test3.png" style="zoom:25%; float:left" />
-
+   - **Description**: This test draws a vertical line that extends beyond the boundaries of the screen to check clipping. **Purpose**: To confirm that the algorithm correctly handles lines that extend offscreen by clipping them at the screen boundaries. **Reasoning**: Handling offscreen content gracefully is important for both performance and visual accuracy.
+   - <img src="/Users/yuerfei/Desktop/test3.png" style="zoom:5%; float:left" />
+   
 3. **Single Pixel Line (Degenerate Case)**
 
-   - **Description**: A line where the start and end points are the same, effectively creating a single pixel.
-
-   - **Purpose**: To ensure that the algorithm can handle degenerate cases where a "line" consists of a single point.
-
-   - **Reasoning**: Even in degenerate cases, the algorithm should render accurately. This case confirms that no assumptions are made about line length.
-   - <img src="/Users/yuerfei/Desktop/test4.png" style="zoom:25%; float:left" />
-
+   - **Description**: A line where the start and end points are the same, effectively creating a single pixel. **Purpose**: To ensure that the algorithm can handle degenerate cases where a "line" consists of a single point. **Reasoning**: Even in degenerate cases, the algorithm should render accurately. This case confirms that no assumptions are made about line length.
+   - <img src="/Users/yuerfei/Desktop/test4.png" style="zoom:5%; float:left" />
+   
 4. **Shallow Diagonal Line**
 
-     - **Description**: A line with a shallow angle, covering only a small part of the screen horizontally but more extended vertically.
+     - **Description**: A line with a shallow angle, covering only a small part of the screen horizontally but more extended vertically. **Purpose**: To test the handling of lines with shallow angles, where aliasing might be more prominent. **Reasoning**: Lines with shallow angles can reveal aliasing and accuracy issues, so this test verifies that the function maintains visual consistency.
 
-     - **Purpose**: To test the handling of lines with shallow angles, where aliasing might be more prominent.
-
-     - **Reasoning**: Lines with shallow angles can reveal aliasing and accuracy issues, so this test verifies that the function maintains visual consistency.
-     - <img src="/Users/yuerfei/Desktop/test5.png" style="zoom:25%; float:left" />
-
-
+     - <img src="/Users/yuerfei/Desktop/test5.png" style="zoom:5%; float:left" />
 
 ### Task 1.8 Testing: triangles
 
@@ -393,27 +303,70 @@ In this task, I aim to verify the robustness and accuracy of the line-drawing fu
 
 1. **Small Triangle (Pixel-Sized)**
 
-   - **Description**: A triangle with all three vertices placed very close together, forming a tiny filled region, potentially as small as a single pixel.
+   - **Description**: A triangle with all three vertices placed very close together, forming a tiny filled region, potentially as small as a single pixel. **Purpose**: To test the algorithm's accuracy and handling of very small triangles, especially subpixel rendering. **Reasoning**: Small triangles challenge the algorithm to maintain precision without skipping pixels. This case ensures that even minimal triangles are rendered correctly without any visual artifacts or skipped regions.
 
-   - **Purpose**: To test the algorithm's accuracy and handling of very small triangles, especially subpixel rendering.
-
-   - **Reasoning**: Small triangles challenge the algorithm to maintain precision without skipping pixels. This case ensures that even minimal triangles are rendered correctly without any visual artifacts or skipped regions.
-   - <img src="/Users/yuerfei/Desktop/tt1.png" style="zoom:25%; float:left" />
+   - <img src="/Users/yuerfei/Desktop/tt1.png" style="zoom:5%; float:left" />
 
 2. **Extremely Large Triangle (Crosses Entire Viewport)**
 
-   - **Description**: A triangle that spans the entire viewport and extends far beyond the screen boundaries.
+   - **Description**: A triangle that spans the entire viewport and extends far beyond the screen boundaries. **Purpose**: To test how the algorithm handles large-scale input and efficiently clips shapes that exceed the viewport dimensions. **Reasoning**: Large triangles can strain algorithms if not efficiently clipped. This test ensures that the implementation processes only visible portions and avoids unnecessary computations, ensuring both correctness and performance.
 
-   - **Purpose**: To test how the algorithm handles large-scale input and efficiently clips shapes that exceed the viewport dimensions.
-
-   - **Reasoning**: Large triangles can strain algorithms if not efficiently clipped. This test ensures that the implementation processes only visible portions and avoids unnecessary computations, ensuring both correctness and performance.
-   - <img src="/Users/yuerfei/Desktop/tt2.png" style="zoom:25%; float:left" />
+   - <img src="/Users/yuerfei/Desktop/tt2.png" style="zoom:5%; float:left" />
 
 3. **Degenerate Triangle**
 
-   - **Description**: A triangle where all three vertices are collinear, effectively reducing the triangle to a line.
+   - **Description**: A triangle where all three vertices are collinear, effectively reducing the triangle to a line. **Purpose**: To test how the algorithm handles edge cases where the triangle's area is effectively zero. **Reasoning**: Degenerate triangles can cause issues in rasterization, such as division by zero or undefined behavior. This test ensures that the algorithm handles such edge cases gracefully, either by rendering a line or omitting the triangle without errors.
 
-   - **Purpose**: To test how the algorithm handles edge cases where the triangle's area is effectively zero.
+   - <img src="/Users/yuerfei/Desktop/tt3.png" style="zoom:5%; float:left" />
 
-   - **Reasoning**: Degenerate triangles can cause issues in rasterization, such as division by zero or undefined behavior. This test ensures that the algorithm handles such edge cases gracefully, either by rendering a line or omitting the triangle without errors.
-   - <img src="/Users/yuerfei/Desktop/tt3.png" style="zoom:25%; float:left" />
+### Task 1.9 Benchmark: Blitting
+
+#### **System Specifications**
+
+**CPU**: Apple M2    **RAM**: 16 GB LPDDR5, 6400 MT/s    **CPU Cache**: 16 MB shared L3 cache, 128 KB per core L1 instruction cache, 64 KB per core L1 data cache
+
+#### **Observations and Explanations**
+
+**Performance Across Implementations**
+
+The three implementations displayed distinct performance characteristics. The **Default Blit** consistently had the slowest performance, primarily due to the overhead introduced by alpha masking, which requires conditional checks for each pixel. The **Blit Without Alpha (Loops)** was faster than the default blit but slower than the `std::memcpy` approach due to the repetitive overhead of pixel-by-pixel operations. In contrast, the **Blit Without Alpha (`std::memcpy`)** delivered the best performance by leveraging optimized memory block copying, which eliminated the need for per-pixel processing.
+
+**Effect of Framebuffer Size**
+
+Larger framebuffers, such as `1920×1080` and `7680×4320`, led to significantly longer execution times across all implementations. This behavior is expected as larger framebuffers involve a higher volume of data, increasing both memory bandwidth requirements and the number of processing operations. Conversely, smaller framebuffers like `320×240` resulted in faster processing due to reduced data requirements.
+
+**Effect of Input Image Size**
+
+The size of the input image also influenced performance. Smaller images, such as `128×128`, resulted in quicker execution times, while larger images (`1024×1024`) took longer. This correlation reflects the linear scaling of processing time with the number of pixels in the input image. Larger images require more iterations or memory operations, which increases overall processing time.
+
+**Memory Bandwidth and CPU Optimization**
+
+Among the implementations, the `std::memcpy` approach achieved the highest memory bandwidth, reflecting efficient CPU utilization and minimal overhead. The loop-based implementation was less efficient due to repetitive operations on individual pixels. Meanwhile, the default implementation showed the lowest memory bandwidth, constrained by the additional logic required for alpha masking, which reduces overall throughput.
+
+**Performance Scaling**
+
+Performance differences between the implementations were more pronounced at higher resolutions. At smaller resolutions such as `320×240`, the overhead from alpha masking or looping was less impactful relative to the total amount of data. However, at higher resolutions like `7680×4320`, the efficiency of `std::memcpy` became increasingly evident, as its optimized memory operations scaled better with the larger data volumes.
+
+<img src="/Users/yuerfei/Desktop/benchmark1.png" style="zoom:5%; float:left" />
+
+### Task 1.10 Benchmark: Line drawing
+
+**1. Line Drawing Algorithms Compared**
+
+I evaluated Bresenham's Line Algorithm, DDA, and an Optimized Bresenham with Early Clipping. Bresenham's is an efficient integer-only method for general rendering, while DDA uses floating-point arithmetic for smoother lines but at higher computational cost. The optimized Bresenham preprocesses lines for visible bounds, reducing unnecessary iterations and improving performance for off-screen or partially visible lines.
+
+**2. Representative Lines and Justifications**
+
+The benchmarking tested various scenarios: a **Diagonal Line Across the Screen** to assess performance for fully visible long lines, a **Horizontal Line Partially Off-Screen** to test clipping and rendering, a **Short Vertical Line Fully Visible** to evaluate minimal x-coordinate cases, a **Fully Off-Screen Line** to ensure skipped computations for invisible geometry, and a **High-Slope Line (Steep)** to test accuracy and efficiency with steep slopes. These cases highlighted different aspects of the algorithms under varied conditions.
+
+**3. Benchmark Results**
+
+<img src="/Users/yuerfei/Desktop/benchmark2.png" style="zoom:10%; float:left" />
+
+**5. Theoretical Justifications**
+
+**Bresenham's Algorithm**: Efficient for general-purpose rendering with integer arithmetic but suffers in scenarios involving off-screen or partially visible lines due to unnecessary computations.
+
+**DDA Algorithm**: Produces smoother lines at the cost of higher computational overhead, especially for large framebuffers.
+
+**Optimized Bresenham**: By clipping lines to visible areas before processing, it avoids unnecessary iterations and memory accesses, improving cache utilization and overall performance.
