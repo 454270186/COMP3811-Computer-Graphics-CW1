@@ -25,7 +25,7 @@ void draw_line_solid( Surface& aSurface, Vec2f aBegin, Vec2f aEnd, ColorU8_sRGB 
     int err = dx - dy;
 
 	while (true) {
-		if (x0 >= 0 && x0 < aSurface.get_width() && y0 >= 0 && y0 < aSurface.get_height()) {
+		if (x0 >= 0 && (uint32_t)x0 < aSurface.get_width() && y0 >= 0 && (uint32_t)y0 < aSurface.get_height()) {
             aSurface.set_pixel_srgb(x0, y0, aColor);
         }
 
@@ -139,7 +139,7 @@ void draw_triangle_interp( Surface& aSurface, Vec2f aP0, Vec2f aP1, Vec2f aP2, C
                     linear_to_srgb(color.b)
                 };
 
-                if (x >= 0 && x < aSurface.get_width() && y >= 0 && y < aSurface.get_height()) {
+                if (x >= 0 && (uint32_t)x < aSurface.get_width() && y >= 0 && (uint32_t)y < aSurface.get_height()) {
                     aSurface.set_pixel_srgb(x, y, srgbColor);
                 }
             }
@@ -166,7 +166,7 @@ void draw_line_dda(Surface& aSurface, Vec2f aStart, Vec2f aEnd, ColorU8_sRGB aCo
         int ix = static_cast<int>(x);
         int iy = static_cast<int>(y);
 
-        if (ix >= 0 && ix < aSurface.get_width() && iy >= 0 && iy < aSurface.get_height())
+        if (ix >= 0 && (uint32_t)ix < aSurface.get_width() && iy >= 0 && (uint32_t)iy < aSurface.get_height())
         {
             aSurface.set_pixel_srgb(ix, iy, aColor);
         }
