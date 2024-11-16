@@ -76,7 +76,7 @@ void blit_masked( Surface& aSurface, ImageRGBA const& aImage, Vec2f aPosition )
             int destY = startY + y;
 
             // Check bounds to avoid out-of-bounds drawing
-            if (destX >= 0 && destX < aSurface.get_width() && destY >= 0 && destY < aSurface.get_height()) {
+            if (destX >= 0 && (uint32_t)destX < aSurface.get_width() && destY >= 0 && (uint32_t)destY < aSurface.get_height()) {
 			    aSurface.set_pixel_srgb(destX, destY, { pixel.r, pixel.g, pixel.b });
             }
         }

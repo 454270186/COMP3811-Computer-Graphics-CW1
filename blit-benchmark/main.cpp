@@ -60,14 +60,14 @@ namespace
 	    {
 	        int startX = 500;
 	        int startY = 500;
-	        for (int y = 0; y < source->get_height(); ++y)
+	        for (int y = 0; (uint32_t)y < source->get_height(); ++y)
 	        {
-	            for (int x = 0; x < source->get_width(); ++x)
+	            for (int x = 0; (uint32_t)x < source->get_width(); ++x)
 	            {
 	                int destX = startX + x;
 	                int destY = startY + y;
 
-	                if (destX >= 0 && destX < surface.get_width() && destY >= 0 && destY < surface.get_height())
+	                if (destX >= 0 && (uint32_t)destX < surface.get_width() && destY >= 0 && (uint32_t)destY < surface.get_height())
 	                {
 	                    ColorU8_sRGB_Alpha pixel = source->get_pixel(x, y);
 						ColorU8_sRGB aColor = {
@@ -107,13 +107,13 @@ namespace
 	        for (int y = 0; y < maxHeight; ++y)
 	        {
 	            int destY = startY + y;
-	            if (destY >= 0 && destY < surface.get_height())
+	            if (destY >= 0 && (uint32_t)destY < surface.get_height())
 	            {
 	                // Use manual pixel copying instead of get_line
-	                for (int x = 0; x < source->get_width(); ++x)
+	                for (int x = 0; (uint32_t)x < source->get_width(); ++x)
 	                {
 	                    int destX = x;
-	                    if (destX >= 0 && destX < surface.get_width())
+	                    if (destX >= 0 && (uint32_t)destX < surface.get_width())
 	                    {
 	                        auto color = source->get_pixel(x, y);
 	                        surface.set_pixel_srgb(destX, destY, {color.r, color.g, color.b});
