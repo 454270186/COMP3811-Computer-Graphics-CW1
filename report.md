@@ -10,10 +10,11 @@
 - 1.4 Drawing triangles
 - 1.5 Barycentric interpolation
 - 1.6 Blitting images
+- 1.7 Testing: lines
 
 
 
-## Task 1.1 Setting Pixels
+### Task 1.1 Setting Pixels
 
 In Task 1.1, I implemented essential functions for rendering pixels to visualize a particle field. Specifically, I created the `set_pixel_srgb` and `get_linear_index` functions, which enable me to position and color individual pixels within a defined window.
 
@@ -330,3 +331,57 @@ This implementation is simple and effective, but there are a few areas where opt
    Access patterns could be optimized by storing the `ColorU8_sRGB` values of visible pixels in a contiguous buffer beforehand, reducing the number of cache misses.
 
 <img src="/Users/yuerfei/Desktop/地球.png" style="zoom:30%;" />
+
+
+
+
+
+### Task 1.7 Testing: lines
+
+In this task, I aim to verify the robustness and accuracy of the line-drawing function by implementing additional test cases that check various edge cases and requirements for line rendering. Specifically, one of the key tests I introduce is a **connected line test** to ensure there is no gap between two sequentially drawn lines, which is a critical property for applications requiring continuous paths.
+
+**Test Case: Two Connected Horizontal Lines with No Gap**
+
+- **Description**: This test case involves drawing two connected lines, where the first line begins at `p0` and extends to `p1`, and the second line continues from `p1` to `p2`. The goal is to ensure that there is no gap at the connecting point `p1`, thereby verifying the continuity of the line-drawing algorithm at junctions.
+
+- **Purpose**: This test checks the algorithm's ability to maintain continuity when two lines meet at a common point (`p1`). In applications where smooth transitions between line segments are essential—such as in rendering paths, shapes, or objects—any gap between segments would be visually unappealing and suggest flaws in the drawing algorithm. The absence of a gap demonstrates that the algorithm handles such connections properly, providing a seamless and visually continuous line.
+- <img src="/Users/yuerfei/Desktop/test1.png" style="zoom:25%; float:left" />
+
+
+
+**Additional Test Cases**
+
+1. **Diagonal Edge-to-Edge Line**
+
+   - **Description**: This test draws a diagonal line across the screen from one corner to the opposite, ensuring that diagonal line handling is accurate.
+
+   - **Purpose**: To verify that the algorithm handles non-axis-aligned lines correctly, especially when they span the entire screen.
+   - **Reasoning**: Diagonal lines often reveal issues with pixel continuity and aliasing. Properly handling them ensures that the function can render lines of any orientation.
+   - <img src="/Users/yuerfei/Desktop/test2.png" style="zoom:25%; float:left" />
+
+2. **Partially Offscreen Vertical Line**
+
+   - **Description**: This test draws a vertical line that extends beyond the boundaries of the screen to check clipping.
+
+   - **Purpose**: To confirm that the algorithm correctly handles lines that extend offscreen by clipping them at the screen boundaries.
+
+   - **Reasoning**: Handling offscreen content gracefully is important for both performance and visual accuracy.
+   - <img src="/Users/yuerfei/Desktop/test3.png" style="zoom:25%; float:left" />
+
+3. **Single Pixel Line (Degenerate Case)**
+
+   - **Description**: A line where the start and end points are the same, effectively creating a single pixel.
+
+   - **Purpose**: To ensure that the algorithm can handle degenerate cases where a "line" consists of a single point.
+
+   - **Reasoning**: Even in degenerate cases, the algorithm should render accurately. This case confirms that no assumptions are made about line length.
+   - <img src="/Users/yuerfei/Desktop/test4.png" style="zoom:25%; float:left" />
+
+4. **Shallow Diagonal Line**
+
+     - **Description**: A line with a shallow angle, covering only a small part of the screen horizontally but more extended vertically.
+
+     - **Purpose**: To test the handling of lines with shallow angles, where aliasing might be more prominent.
+
+     - **Reasoning**: Lines with shallow angles can reveal aliasing and accuracy issues, so this test verifies that the function maintains visual consistency.
+     - <img src="/Users/yuerfei/Desktop/test5.png" style="zoom:25%; float:left" />

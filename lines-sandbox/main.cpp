@@ -226,6 +226,31 @@ int main( int aArgc, char* aArgv[] ) try
 
 			//TODO: your own sample cases here?
 			//TODO: your own sample cases here?
+			 case 5: {
+        		// Two connected lines with no gap
+        		draw_line_solid(surface, {50.f, 200.f}, {300.f, 200.f}, {255, 0, 0});
+        		draw_line_solid(surface, {300.f, 200.f}, {550.f, 200.f}, {255, 0, 0});
+    		} break;
+
+			case 6: {
+       			// Diagonal line from corner to corner
+        		draw_line_solid(surface, {0.f, 0.f}, {float(fbwidth), float(fbheight)}, {0, 255, 0});
+    		} break;
+
+   		 	case 7: {
+        		// Vertical line partially off-screen at the top
+        		draw_line_solid(surface, {50.f, -50.f}, {50.f, 450.f}, {0, 0, 255});
+    		} break;
+
+    		case 8: {
+        		// Single-pixel line (degenerate case)
+        		draw_line_solid(surface, {300.f, 300.f}, {300.f, 300.f}, {255, 255, 255});
+    		} break;
+
+    		case 9: {
+        		// Shallow diagonal line
+        		draw_line_solid(surface, {50.f, 200.f}, {600.f, 250.f}, {255, 255, 0});
+    		} break;
 		}
 		
 		context.draw( surface );
